@@ -121,7 +121,18 @@ class Tree {
     }
   }
 
-  find(value) {}
+  find(value) {
+    let current = this.root;
+    if (value === current.data) return current;
+    while (value < current.data) {
+      current = current.left;
+    }
+    while (value > current.data) {
+      current = current.right;
+    }
+    if (value === current.data) return current;
+    else return null;
+  }
 }
 
 const prettyPrint = (node, prefix = '', isLeft = true) => {
