@@ -54,6 +54,7 @@ class Tree {
         root.right = new Node(value);
         hasChild = false;
       }
+      //Value already exists, so it won't be inserted
       if (value === root.data) hasChild = false;
     }
   }
@@ -65,15 +66,15 @@ class Tree {
       previous = current;
       //Break if value doesn't exist or update current root if node has subtrees
       if (value < current.data) {
-        if (current.left === null) break;
+        if (!current.left) break;
         current = current.left;
       } else if (value > current.data) {
-        if (current.right === null) break;
+        if (!current.right) break;
         current = current.right;
       }
     }
     //If value exists and its node has no subtrees
-    if (current.left === null && current.right === null) {
+    if (!current.left && !current.right) {
       //Check which leaf the node is and remove it
       if (previous.left === current) {
         previous.left = null;
@@ -81,8 +82,46 @@ class Tree {
         previous.right = null;
       }
     }
-    console.log(current);
+    //If value exists and its node has only one child
+    if ((current.left && !current.right) || (!current.left && current.right)) {
+      //Replace node with child according to the node's "side"
+      if (current.left) {
+        if (current === previous.left) {
+          previous.left = current.left;
+        } else {
+          previous.right = current.left;
+        }
+      } else {
+        if (current === previous.left) {
+          previous.left = current.right;
+        } else {
+          previous.right = current.right;
+        }
+      }
+    }
+    //If value exists and its node has more than one child
+    if (current.left && current.right) {
+      let oldPrevious = previous;
+      previous = current;
+      current = current.right;
+      //Get closest higher number than current node
+      while (current.left) {
+        current = current.left;
+      }
+      //Remove reference to itself to avoid stack overflow
+      previous.right.left = null;
+      //Replace node
+      current.left = previous.left;
+      current.right = previous.right;
+      if (previous === oldPrevious.left) {
+        oldPrevious.left = current;
+      } else {
+        oldPrevious.right = current;
+      }
+    }
   }
+
+  find(value) {}
 }
 
 const prettyPrint = (node, prefix = '', isLeft = true) => {
@@ -95,12 +134,11 @@ const prettyPrint = (node, prefix = '', isLeft = true) => {
   }
 };
 
-let arr = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
+let arr = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324, 36, 45, 98, 150];
 
 let tree = new Tree(arr);
 tree.insert(0);
 tree.insert(10);
 tree.insert(20);
-tree.delete(67);
 
 prettyPrint(tree.root);
