@@ -109,7 +109,7 @@ class Tree {
         current = current.left;
       }
       //Remove reference to itself to avoid stack overflow
-      previous.right.left = null;
+      this.delete(previous.right.data);
       //Replace node
       current.left = previous.left;
       current.right = previous.right;
@@ -140,5 +140,6 @@ let tree = new Tree(arr);
 tree.insert(0);
 tree.insert(10);
 tree.insert(20);
+tree.delete(8);
 
 prettyPrint(tree.root);
