@@ -145,13 +145,57 @@ class Tree {
       //If a function is provided, call it with the current node as a parameter
       //otherwise, add the current node to an array
       if (func) func(current);
-      else arr.push(current);
+      else arr.push(current.data);
       //If node has children, add them to queue
       if (current.left) queue.push(current.left);
       if (current.right) queue.push(current.right);
       queue.shift();
     }
     if (!func) return arr;
+  }
+
+  inorder(func, current = this.root, arr = []) {
+    if (!current) return;
+
+    this.preorder(func, current.left, arr);
+    if (func) func(current);
+    else arr.push(current.data);
+    this.preorder(func, current.right, arr);
+    if (!func) return arr;
+  }
+
+  preorder(func, current = this.root, arr = []) {
+    if (!current) return;
+
+    if (func) func(current);
+    else arr.push(current.data);
+    this.preorder(func, current.left, arr);
+    this.preorder(func, current.right, arr);
+    if (!func) return arr;
+  }
+
+  postorder(func, current = this.root, arr = []) {
+    if (!current) return;
+
+    this.preorder(func, current.left, arr);
+    this.preorder(func, current.right, arr);
+    if (func) func(current);
+    else arr.push(current.data);
+    if (!func) return arr;
+  }
+
+  height(value) {
+    let node = this.find(value);
+    console.log(node);
+    if (!node.left && !node.right) return 1;
+    if (node.left) {
+      let arr = [];
+      return arr.push(this.height(node.left.data));
+    }
+    if (node.right) {
+      let arr = [];
+      return arr.push(this.height(node.right.data));
+    }
   }
 }
 
@@ -175,4 +219,4 @@ tree.delete(8);
 
 prettyPrint(tree.root);
 
-console.log(tree.levelOrder());
+console.log(tree.height(5));
