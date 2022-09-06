@@ -18,6 +18,7 @@ class Tree {
     //Recursive function to insert nodes based on their value
     if (start > end) return null;
     let middle = Math.round((start + end) / 2);
+    console.log(arr[middle]);
     let root = new Node(arr[middle]);
 
     root.left = this.buildTree(arr, start, middle - 1);
@@ -185,17 +186,50 @@ class Tree {
   }
 
   height(value) {
-    let node = this.find(value);
-    console.log(node);
-    if (!node.left && !node.right) return 1;
+    let node;
+    if (typeof value !== 'object') {
+      node = this.find(value);
+    } else node = value;
+    let leftHeight = 0;
+    let rightHeight = 0;
+    if (!node) return 0;
     if (node.left) {
-      let arr = [];
-      return arr.push(this.height(node.left.data));
+      leftHeight = this.height(node.left);
     }
     if (node.right) {
-      let arr = [];
-      return arr.push(this.height(node.right.data));
+      rightHeight = this.height(node.right);
     }
+    return Math.max(leftHeight, rightHeight) + 1;
+  }
+
+  depth(value) {
+    let current = this.root;
+    let counter = 0;
+    while (value < current.data) {
+      if (current.left) {
+        current = current.left;
+        counter++;
+      } else break;
+    }
+    while (value > current.data) {
+      if (current.right) {
+        current = current.right;
+        counter++;
+      } else break;
+    }
+    if (current.data === value) {
+      return counter;
+    } else return null;
+  }
+
+  isBalanced() {
+    let difference = this.height(this.root.left) - this.height(this.root.right);
+    return difference >= -1 && difference <= 1;
+  }
+
+  rebalance() {
+    let arr = this.levelOrder();
+    this.root = this.buildTree(arr, 0, arr.length);
   }
 }
 
@@ -209,14 +243,43 @@ const prettyPrint = (node, prefix = '', isLeft = true) => {
   }
 };
 
-let arr = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324, 36, 45, 98, 150];
+function printRandomNumbers(min = 1, max = 100, amount = 20) {
+  let arr = [];
+  let number = 0;
+  let counter = 0;
+  while (counter < amount) {
+    number = Math.random() * max + min;
+    if (!arr.includes(number)) {
+      arr.push(Math.round(number));
+      counter++;
+    }
+  }
+  return arr;
+}
+
+let arr = printRandomNumbers();
 
 let tree = new Tree(arr);
-tree.insert(0);
-tree.insert(10);
-tree.insert(20);
-tree.delete(8);
 
 prettyPrint(tree.root);
 
-console.log(tree.height(5));
+console.log(tree.isBalanced());
+console.log(tree.levelOrder());
+console.log(tree.preorder());
+console.log(tree.inorder());
+console.log(tree.postorder());
+
+tree.insert(100);
+tree.insert(101);
+tree.insert(102);
+tree.insert(103);
+tree.insert(100);
+tree.insert(105);
+tree.insert(170);
+tree.insert(368);
+
+console.log(tree.isBalanced());
+prettyPrint(tree.root);
+tree.rebalance();
+prettyPrint(tree.root);
+console.log(tree.isBalanced());
