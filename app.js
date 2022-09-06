@@ -14,15 +14,17 @@ class Tree {
     this.root = this.buildTree(arr, 0, arr.length - 1);
   }
 
-  buildTree(arr, start, end) {
+  buildTree(arr) {
     //Recursive function to insert nodes based on their value
-    if (start > end) return null;
-    let middle = Math.round((start + end) / 2);
+    if (arr.length === 1) return new Node(arr[0]);
+    if (arr.length === 0) return null;
+
+    let middle = Math.floor(arr.length / 2);
     console.log(arr[middle]);
     let root = new Node(arr[middle]);
 
-    root.left = this.buildTree(arr, start, middle - 1);
-    root.right = this.buildTree(arr, middle + 1, end);
+    root.left = this.buildTree(arr.slice(0, middle));
+    root.right = this.buildTree(arr.slice(middle + 1, arr.length));
 
     return root;
   }
