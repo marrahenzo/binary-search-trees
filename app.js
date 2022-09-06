@@ -133,6 +133,26 @@ class Tree {
     if (value === current.data) return current;
     else return null;
   }
+
+  levelOrder(func) {
+    if (this.root === null) return null;
+    let current = this.root;
+    let queue = [current];
+    let arr = [];
+    //While there is at least one node remaining
+    while (queue.length > 0) {
+      current = queue[0];
+      //If a function is provided, call it with the current node as a parameter
+      //otherwise, add the current node to an array
+      if (func) func(current);
+      else arr.push(current);
+      //If node has children, add them to queue
+      if (current.left) queue.push(current.left);
+      if (current.right) queue.push(current.right);
+      queue.shift();
+    }
+    if (!func) return arr;
+  }
 }
 
 const prettyPrint = (node, prefix = '', isLeft = true) => {
@@ -154,3 +174,5 @@ tree.insert(20);
 tree.delete(8);
 
 prettyPrint(tree.root);
+
+console.log(tree.levelOrder());
